@@ -74,6 +74,13 @@ class MicSession:
         result = set_causal_prior(self, edges)
         return self._log("set_causal_prior", result)
 
+    def construction_stability(self, X_a, X_b, feature_names, y=None) -> dict:
+        """Flag features that depend on dataset construction parameters."""
+        from ..analysis.feature_stability import construction_stability as _cs
+
+        return self._log("construction_stability",
+                         _cs(X_a, X_b, feature_names, y=y))
+
     def test_causal_prior(self, sample_index: int | None = None) -> dict:
         """Check each prior edge against the intervention causal graph."""
         from ..agents.causal_prior import test_causal_prior

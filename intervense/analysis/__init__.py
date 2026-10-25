@@ -2,6 +2,7 @@ from .attribution import explain_sample, shap_matrix
 from .causal_graph import build_causal_graph
 from .counterfactual import default_threshold, search_counterfactual, search_counterfactuals
 from .discovery import discovery_edges
+from .feature_stability import construction_stability
 from .faithfulness import aggregate_faithfulness, evaluate_faithfulness, explain_simulate_score
 from .data_forensics import data_forensics
 from .cate_heterogeneity import cate_heterogeneity

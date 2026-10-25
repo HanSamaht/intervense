@@ -1,3 +1,175 @@
+## 2026-10-25: gate harness inverted config labels, drop list read as include (manual analysis)
+
+Tag: manual analysis. run_gate.py passed BASE_DROP plus the target
+group as the drop list, so every config labelled plus_X actually
+excluded X. Six configurations ran with shuffled identities; the
+printed winners were misattributed and the true incumbent (base 74
+alone) was never measured on this window. I am sorry for the mistake:
+the harness argument was named drop and I supplied include lists.
+Fix: rerun with corrected semantics, including the clean incumbent
+and the top candidates under their real names, before any push
+decision is taken from this gate.
+
+## 2026-10-25: six kernel pushes never registered with the scoring bot (manual analysis)
+
+Tag: manual analysis. The memecoins league re-runs only notebooks
+registered through a code-competition entry
+(api.competition_submit_code with kernel and version). I treated a
+kaggle kernels push as registration and reported several first-scored
+day predictions on that assumption; the refreshed ranking_history
+shows zero entries for this account while 2026-10-22 was scored for
+others. Every version from v1 to v6 has therefore never been scored,
+and the days elapsed since the first push produced no leaderboard
+position. I am sorry for the mistake: the registration mechanism was
+documented on the competition overview page and in the host notebook
+(send it to the bot) and I did not verify our entries against
+ranking_history until the day had already been scored for others.
+Fix: register the champion kernel version through
+competition_submit_code, then verify the account appears in the next
+ranking_history refresh before claiming any scored day.
+
+## 2026-10-24: discovery backend unusable on real competition matrices (manual analysis)
+
+Tag: manual analysis, framework defect. Tested against the
+memecoins feature matrix (107 features, 6134 tokens, natural NaN
+from missing curve phases): GES did not finish in 25 minutes on the
+full set nor in 8 minutes on the top 25 by gain; PC rejected the
+data outright because causal-learn's FisherZ does not accept NaN and
+the intervense wrapper performs no imputation. After manual median
+imputation PC completed in 0.3 seconds on 15 features but returned
+only skeleton redundancy edges with placeholder effect values of
+1.000 and zero feature-to-prediction driver edges, less informative
+than a three-line Spearman pruning which identified 24 redundant
+deputies by name. I am sorry for the gap: the discovery module
+advertises structure discovery but was never integration-tested
+against a matrix with missingness at this width. Fix directions:
+impute or drop NaN inside discovery_edges, implement a real effect
+measure for discovered edges, and pre-reduce dimensionality before
+calling GES.
+
+## 2026-10-24: kernel v5 shipped a feature regression validated only for direction (manual analysis)
+
+Tag: manual analysis. The 33 new features (fine-grained
+microstructure and wallet graph) were smoke-tested locally on 3 tape
+days for computation and sign, then pushed without an out-of-sample
+gain check, on the reasoning that the kernel walk-forward would act
+as the validator. It did: the same decision rule on the same 6
+evaluation days went from +7.19 pnl (74 features) to -15.61 (107
+features), hit rate 20.5 to 8.3 percent, and wg_vet_max showed a
+day-to-day KS of 1.0. The regression went live for one scoring
+cycle before detection. I am sorry for the mistake: pushing unproven
+features ahead of the ablation inverted the validation order. Fix:
+local tape now covers 12 label days, so feature groups get ablated
+out-of-sample locally before any push; the live kernel gets only
+configurations that beat the incumbent on the same walk-forward.
+
+## 2026-10-24: downloader restart spawned a duplicate a third time (manual analysis)
+
+Tag: manual analysis. A new download_tape.py instance was started
+without checking for a live one; the process count showed 2. The
+earlier taskkill attempt had printed a success line from an
+unconditional echo while the actual taskkill output was discarded,
+so the previous instance had survived. This is the third occurrence
+of the duplicate-downloader class documented twice today. I am sorry
+for the mistake: kill commands must be verified by process count
+after the kill, not by an echo. Fix: enumerate PIDs, kill all, verify
+count zero, start one, verify count one.
+
+## 2026-10-24: half-finished cache path rename made kernel v2 write unreadable file names (manual analysis)
+
+Tag: manual analysis. The _day_cache path fix updated the cache
+existence check and load_cache but left the two write lines in
+build_day appending .features.parquet and .edges.parquet to the new
+path, producing day=X.features.parquet.features.parquet files that
+load_cache cannot see. Local runs never hit the write path because
+restored caches made build_day return early, so the bug surfaced only
+on Kaggle's empty working directory as ValueError from an empty
+pd.concat, after the full 63-day build pass. I am sorry for the
+mistake: a rename touched three call sites and I verified only two.
+The v2 kernel scored an ERROR run for it. Fix: write to the cache
+paths directly and reproduce the empty-cache write-then-read flow
+locally before any repush.
+
+## 2026-10-24: no-clobber copy left corrupt local caches beside intact kernel copies (manual analysis)
+
+Tag: manual analysis. Restoring the 63-day cache from the kernel
+output used cp -n, which kept pre-existing locally written files.
+Three of those (2026-10-17, 10-18 partial writes from killed builds,
+10-19 truncated parquet) were corrupt or empty, so feature_matrix
+skipped those days and the walk-forward trained on a narrower matrix
+than intended. Separately the grid loop indexed a positional decision
+vector with groupby label indices, raising IndexError after the OOS
+predictions were already saved. I am sorry for both mistakes: the
+copy should have been integrity-checked, not trustingly skipped, and
+the loop should have reset the index. Fix: footer-validate every
+cache file, force-copy good kernel copies over bad locals, and run
+the decision grid on the saved per-token parquet with positional
+indices.
+
+## 2026-10-24: run_tune mixed cache-day list with tape-day matrix, empty training fold (manual analysis)
+
+Tag: manual analysis. run_tune.py selected walk-forward days from the
+outputs/cache listing (63 Kaggle-built days) but built the feature
+matrix through feature_matrix() with days=None, which globs the local
+data/trades directory (4 days present). Every fold before the last
+two filtered its training rows to zero; fit_reach silently degraded
+through its under-10-rows guard and fit_conditional_miss crashed on a
+0-sample array. I am sorry for the mistake: the two day sources
+should have been one variable. Fix: pass the cached day list into
+feature_matrix(days=...) and add a training-size guard in the fold
+loop.
+
+## 2026-10-24: competition entry upload stalled at 0 percent, googleapis endpoint (third-party source)
+
+Tag: third-party source. The competition file entry for
+memecoins-pump-or-dump (20 KB CSV) stalled at 0 percent upload on
+three attempts across CLI and API with correct argument order, the
+same connectivity failure documented 2026-10-23 for dataset uploads
+against the googleapis blob endpoint. Kernel pushes go through the
+kernels endpoint and succeeded twice during the same window, so the
+block is specific to the upload path. I am sorry for the mistake: I
+should have recalled the 2026-10-23 registry entry before promising an
+immediate file entry. Mitigation: the rotation channel scores the
+pushed notebook version, which is live; file entry retries continue
+in the background.
+
+## 2026-10-24: fit_conditional_miss tiled the level grid with the wrong repeat count (manual analysis)
+
+Tag: manual analysis. In pump_or_dump/src/model.py the training payoff
+target used np.tile(grid, len(grid)) where the held payoff used
+np.repeat(held, len(grid)), producing a 36-element right-hand operand
+against a len(y)*6 left-hand operand and a broadcast ValueError on the
+first real execution. The bug was invisible until a labelled matrix
+was fitted because the shape error needs nonzero training rows. I am
+sorry for the mistake; the correct repeat is the number of label rows,
+and the fix was verified by the immediate execution run that caught
+it. Found by running run_now.py on the creation-feature matrix.
+
+## 2026-10-24: duplicate tape downloader processes raced on the same files (manual analysis)
+
+Tag: manual analysis. In the pump_or_dump workspace the tape
+downloader was restarted after a patch, but the earlier instance was
+started from a previous shell and kill %1 in a new shell could not
+reach it. Two python download_tape.py processes then wrote the same
+target files concurrently, the same failure mode the NFL download
+script documented (parallel streams starve each other, 220 KB/s down
+to 40 KB/s). Fixed by killing both PIDs via taskkill, deleting all
+partial files, and restarting exactly one instance whose skip check
+validates the parquet footer instead of trusting file size (a killed
+process left a 20 MB truncated file named as the final one). I am
+sorry for the mistake; process handles must be checked by PID before
+restarting any long-running downloader.
+
+## 2026-10-24: kaggle client nested-dir layout and truncated parquet passed the size check (manual analysis)
+
+Tag: manual analysis. competition_download_file treats the third
+argument as a target folder, so passing a file path produced
+day=X/table.parquet/day_X_table.parquet; the first download run also
+left a 20 MB truncated parquet that a >1 MB size threshold would have
+accepted as complete. Fixed by globbing both layouts in tape_paths and
+by the parquet-footer validity check described above. Apology issued
+per project rules: I verified the client's path semantics only after
+observing the wrong layout instead of reading the signature first.
 
 ## 2026-10: archetype efficiency transfer compared z-score to raw value
 
@@ -193,3 +365,178 @@ caught it. I wrote the conversion against the pandas 2 nanosecond
 assumption. I am sorry for the breakage. Fixed with a unit-independent
 epoch conversion via Timestamp(0) offset; verified in a fresh venv on
 pandas 3.1.0 and on the local pandas 2.3.3.
+
+## 2026-10-24: finetune kernel sixth missing dep pyopenms (manual analysis)
+
+Tag: framework tool output. dreams/utils/io.py imports pyopenms and
+wandb at module top level; v7 failed on pyopenms. Installing pyopenms
+(a 200MB C++ wheel) for two unused imports is waste. I am sorry for
+the repeated dependency churn; the import graph should have been fully
+mapped once after the second failure. v8 patches the io.py import to
+optional and installs only wandb.
+
+## 2026-10-24: v8 pushed with syntax error in patch cell (manual analysis)
+
+Tag: manual analysis. I wrote a nested-escape replacement string that
+unrolled into a literal newline inside a single-quoted string, and the
+compile check failed after the push already happened because the push
+command ran unconditionally after the heredoc block in the same shell
+line. I am sorry for pushing broken code. v9 rebuilds the patch text
+with explicit chr(10) joins and gates the push behind the compile
+check.
+
+## 2026-10-24: v9 pyopenms patch broke io.py indentation (manual analysis)
+
+Tag: manual analysis. The target import sits inside a with block with
+4-space indentation; my flat try/except replacement text kept the
+original 4 spaces for the body, producing an IndentationError in the
+patched file. I patched without reading the surrounding context of the
+line. I am sorry. v10 replaces the whole line with a regex that
+preserves and extends the original indentation.
+
+## 2026-10-24: pyopenms imports scattered across multiple modules (manual analysis)
+
+Tag: manual analysis. v10 fixed io.py only; lcms.py imports pyopenms
+again. Fixing one file at a time costs a 15-minute kernel run per
+occurrence. v11 walks the whole source tree and rewrites every
+pyopenms import with an indentation-preserving try/except in one pass.
+
+## 2026-10-24: lcms module-level annotation evaluates pyms at import (manual analysis)
+
+Tag: manual analysis. After the optional-import patch, lcms.py still
+crashed because def signatures annotate types as pyms.MSSpectrum,
+which Python evaluates at definition time. v12 prepends
+from __future__ import annotations to every patched file so all
+annotations become lazy strings; runtime uses of pyms are confined to
+functions we never call on this import chain.
+
+## 2026-10-24: torch 2.14 weights_only default rejects PosixPath in ckpt (third-party source)
+
+Tag: third-party source. The import chain finally passes; loading the
+DreaMS checkpoint fails because torch 2.14 defaults torch.load to
+weights_only=True and the checkpoint hyperparameters contain
+pathlib.PosixPath. Fix: add_safe_globals([pathlib.PosixPath]) before
+load_from_checkpoint.
+
+## 2026-10-24: add_safe_globals does not reach lightning ckpt unpickler (manual analysis)
+
+Tag: manual analysis. add_safe_globals([PosixPath]) did not clear the
+WeightsUnpickler rejection inside load_from_checkpoint; the checkpoint
+is the official DreaMS release artifact from Hugging Face, so trusting
+it with weights_only=False is acceptable. v14 monkeypatches
+torch.load to default weights_only=False for the load call.
+
+## 2026-10-24: monkeypatch used setdefault, lightning passes explicit arg (manual analysis)
+
+Tag: manual analysis. load_from_checkpoint explicitly passes
+weights_only=True, so k.setdefault('weights_only', False) never fired.
+Force assignment in v15.
+
+## 2026-10-24: checkpoint hparams reference msml package (manual analysis)
+
+Tag: manual analysis. The checkpoint unpickles hyperparameters that
+reference the msml package (roman-bushuiev/msml_legacy_architectures),
+which DreaMS setup.py lists as a git dependency and I skipped when
+reading the dependency list. v16 installs it from git in the
+internet-enabled kernel.
+
+## 2026-10-24: v11 rewrite dropped the spectra ModifiedCosine patch (manual analysis)
+
+Tag: manual analysis. When I replaced the patch block with the
+tree-walking version in v11, the standalone spectra.py ModifiedCosine
+replacement disappeared; the import chain only reached spectra.py now
+that lcms is fixed. I removed a live fix during a refactor without
+checking. I am sorry. v17 folds the matchms rename into the same
+tree-wide patch pass.
+
+## 2026-10-24: checkpoint classes live in msml package copy of DreaMS (manual analysis)
+
+Tag: manual analysis. msml_legacy_architectures vendors its own copy
+of the DreaMS model under msml.models, and the official checkpoint
+hyperparameters pickle references those msml classes. Patching the
+/tmp source clone was irrelevant to the unpickle path; the import error
+came from dist-packages/msml/utils/spectra.py. v18 drops the source
+clone, imports DreaMS from msml, and applies the pyopenms and
+ModifiedCosine patches to the installed msml tree instead.
+
+## 2026-10-24: msml imports pyopenms under a different alias (manual analysis)
+
+Tag: manual analysis. msml/utils imports pyopenms as oms, not as pyms,
+so the anchored regex missed it. v19 matches any alias and assigns the
+bound name to None in the except branch.
+
+## 2026-10-24: lightning strict hparams passing drops DreaMS init args (third-party source)
+
+Tag: third-party source. With the checkpoint finally unpickling, new
+lightning filters hyper_parameters against __init__ signature and
+raises missing args/spec_preproc; the stored hparams apparently do not
+carry both keys the way new lightning expects. v20 rebuilds the model
+manually from checkpoint['hyper_parameters'] and load_state_dict,
+bypassing load_from_checkpoint.
+
+## 2026-10-24: embedding_model.ckpt is a head, backbone is ssl_model.ckpt (manual analysis)
+
+Tag: manual analysis. The hparam keys of embedding_model.ckpt are
+head-level (backbone_pth, backbone_cls, triplet margin); the DreaMS
+transformer weights with args/spec_preproc live in ssl_model.ckpt per
+dreams/api.py. v21 downloads ssl_model.ckpt as the backbone source.
+
+## 2026-10-24: unpickled SpectrumPreprocessor lacks new attributes (manual analysis)
+
+Tag: manual analysis. The spec_preproc instance pickled into
+ssl_model.ckpt predates attributes the current __call__ reads, such
+as to_relative_intensities. v22 rebuilds a fresh SpectrumPreprocessor
+carrying over dformat and peak-count settings and swaps it onto the
+backbone.
+
+## 2026-10-25: pubchem kernel pandarallel silently returned None (manual analysis)
+
+Tag: framework tool output. The rdkit pass processed 79.5M rows in
+2.4 hours and kept zero: every parallel_apply result was dropped. The
+single-process path works locally (same code shape as
+precompute_train_fps). pandarallel on the Kaggle image silently fails
+instead of raising. I am sorry for the wasted 2.4-hour run. v2
+replaces pandarallel with chunked multiprocessing.Pool.
+
+## 2026-10-25: tier2_pairwise three bugs (manual analysis)
+
+Tag: manual analysis. (1) train_pair stepped the outer FPNet
+optimizer instead of opt2, so both towers never updated and the
+contrastive loss sat at 12.67, the random-embedding level. (2) The
+pseudo-spectrum noise range uniform(60, min(pmz-20, 900)) inverts for
+precursors below 80 Da and raises ValueError. (3) All three arm
+evaluations were deferred to the end, so one arm crashing discarded
+the finished arms. I am sorry for all three; each was visible in a
+careful read of the code before running. Fixed: correct optimizer,
+clamped noise range, per-arm immediate evaluation.
+
+## 2026-10-25: pubchem kernel died twice on nonexistent RingInfo method (manual analysis)
+
+Tag: manual analysis. mol.GetRingInfo().NumRingSystems() does not
+exist; the correct call is rdMolDescriptors.CalcNumRingSystems(mol).
+The AttributeError was swallowed by the except clause and every one of
+79.5M molecules returned None in both v1 and v2, wasting two 2.4-hour
+runs. I never unit-tested the per-molecule function before shipping
+the kernel, and the blanket except hid the failure. I am sorry for
+both. Fix: correct API call, local unit test on three known molecules
+before push, and the except now re-raises on AttributeError.
+
+## 2026-10-25: pubchem v3 third missing import AllChem (manual analysis)
+
+Tag: manual analysis. The local unit test imported AllChem at top of
+file; the notebook cell did not, so Chem.AllChem raised in the pool
+worker. The strict except added in v3 caught it in minutes instead of
+hours, which is the discipline working. Fix: add AllChem to the cell
+imports. Same root cause family as v1/v2: shipping without running
+the exact shipped code locally.
+
+## 2026-10-25: pubchem v4 import patch targeted the wrong cell (manual analysis)
+
+Tag: manual analysis. The v4 patch required def process and the import
+line in the same cell; they live in different cells, so the import was
+never added, and my script still printed a success line because the
+print was not gated on the replacement actually happening. Fourth
+iteration on this kernel from the same root cause: edits verified by
+string matching instead of executing the final artifact. I am sorry.
+Fix applied directly to cell 1 and verified by executing the shipped
+cells in order with the download loop stripped.

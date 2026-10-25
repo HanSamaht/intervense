@@ -17,6 +17,14 @@ ALL files must contain ZERO Chinese characters. This includes code, comments, do
 - Remove filler words
 - One sentence says one thing
 - Write like a technical report
+- No AI-sounding phrases: avoid "delve", "crucial", "landscape", "leverage",
+  "furthermore", "moreover", "it is worth noting", "notably"
+- No metaphors or colorful language; state facts and implications plainly
+- No rhetorical questions
+- No dramatic transitions ("But here is the thing", "The key insight is")
+- Prefer short declarative sentences over compound constructions
+- Numbers and evidence replace adjectives; never write "significant" without a p-value
+- Confidence is expressed by the strength of the number, not by intensifiers
 
 ## Bug logging
 
@@ -39,6 +47,14 @@ ALL files must contain ZERO Chinese characters. This includes code, comments, do
 3. The nightly workflow runs the full suite and the Kaggle artifact smoke
 4. A new slow test needs a fast unit companion or a justification in the commit
 
+## Competition deliverable rule (added 2026-10-24, user mandate)
+
+For competition entries the owner wants the strongest single-shot
+model delivered directly. No staged validation ceremonies, no interim
+versions presented as deliverables, no process narrated as progress.
+Decision-layer tuning happens internally before delivery, not as a
+reported step.
+
 ## Other
 
 - API keys only in .env
@@ -47,3 +63,13 @@ ALL files must contain ZERO Chinese characters. This includes code, comments, do
 - Evidence graded: interventional / observational / prior / manual
 - Audit only, do not prevent
 - License: AGPL-3.0
+
+## Kaggle push discipline (added 2026-10-23, user mandate)
+
+1. NEVER push, submit, upload, or publish anything to Kaggle (kernels,
+   datasets, notebooks, forum posts, competition entries) without an
+   explicit go-ahead from the project owner in the current
+   conversation. Prior approval of one action never covers the next.
+2. Do not even use the word "submit" in replies. Describe the pending
+   action plainly (for example: "ready to push kernel v8") and wait.
+3. This rule overrides any autonomy instruction elsewhere in this file.

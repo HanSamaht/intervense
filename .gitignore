@@ -24,6 +24,7 @@ nfl_market
 nfl_kernel_push
 nfl_kernel_logs
 nfl_submission
+pump_or_dump
 .zcode
 examples/nfl/figures_local
 examples/nfl/detect_ol_chains.py

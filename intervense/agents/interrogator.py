@@ -604,6 +604,14 @@ class Interrogator:
             {
                 "type": "function",
                 "function": {
+                    "name": "construction_stability",
+                    "description": "compare two row-aligned feature matrices from different dataset constructions (datasets['X_a'], datasets['X_b'], optional datasets['y']); flags features whose distribution or target IC depends on construction parameters such as history depth",
+                    "parameters": {"type": "object", "properties": {}},
+                },
+            },
+            {
+                "type": "function",
+                "function": {
                     "name": "symbolic_distill",
                     "description": "symbolic distillation:modelbehavioraudit('modelin'most)",
                     "parameters": {
@@ -790,6 +798,16 @@ class Interrogator:
             ),
             "check_contamination": lambda: s.check_contamination(None, args.get("data_ref")),
             "leak_scan": lambda: s.leak_scan(s.datasets.get("y", [1] * len(s.driver.background))),
+                    "construction_stability": lambda: (
+                        __import__("intervense.analysis.feature_stability", fromlist=["construction_stability"])
+                        .construction_stability(
+                            s.datasets["X_a"], s.datasets["X_b"],
+                            s.datasets.get("feature_names", [f"f{i}" for i in range(s.datasets["X_a"].shape[1])]),
+                            y=s.datasets.get("y"),
+                        )
+                        if "X_a" in s.datasets and "X_b" in s.datasets
+                        else {"error": "datasets['X_a'] and datasets['X_b'] are required"}
+                    ),
             "symbolic_distill": lambda: s.symbolic_distill(int(args.get("n_samples", 400))),
             "check_drift": lambda: s.check_drift(args.get("new_data"), args.get("data_ref")),
             "register_data": lambda: s.register_data(args["name"], args["data"]),
