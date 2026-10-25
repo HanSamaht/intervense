@@ -540,3 +540,14 @@ iteration on this kernel from the same root cause: edits verified by
 string matching instead of executing the final artifact. I am sorry.
 Fix applied directly to cell 1 and verified by executing the shipped
 cells in order with the download loop stripped.
+
+## 2026-10-25: discovery rewrite typo FCIBased for FCMBased (manual analysis)
+
+Tag: manual analysis. While rewriting discovery.py for the v0.19.0
+robustness work I typed causallearn.search.FCIBased.lingam instead of
+FCMBased; the soft import swallowed the ModuleNotFoundError and every
+discovery test silently skipped instead of failing. Same failure
+family as the pubchem API typos: untested import paths hidden by a
+broad except. I am sorry. Fix: correct module path; the module-level
+check now asserts HAS_CAUSAL_LEARN is True when causallearn imports,
+so a path typo cannot silently disable the backends again.

@@ -121,5 +121,66 @@ def test_discovery_all_constant_rejected():
                                      rng.integers(0, 2, size=100))
     driver = detect_driver(model, ["z1", "z2", "r"], np.column_stack(
         [np.zeros(100), np.ones(100), rng.normal(size=100)]), name="dead")
-    with pytest.raises(ValueError, match="non-constant"):
+    with pytest.raises(ValueError, match="usable columns"):
         discovery_edges(driver, method="pc")
+
+
+class _NaNChainDriver:
+    """Reuse the chain driver but poison a few background rows with NaN,
+    the shape real panel data arrives in."""
+
+    def __init__(self, base):
+        self._base = base
+        bg = base.background.copy()
+        bg[:20, 0] = np.nan
+        bg[5:10, 2] = np.inf
+        self._poisoned = bg
+
+    def __getattr__(self, name):
+        return getattr(self._base, name)
+
+    @property
+    def background(self):
+        return self._poisoned
+
+
+def test_discovery_survives_nan_rows(chain_driver):
+    wrapped = _NaNChainDriver(chain_driver)
+    edges = discovery_edges(wrapped, method="pc")
+    assert edges, "discovery returned nothing on NaN-bearing data"
+    assert all(np.isfinite(e.effect) for e in edges)
+    assert any("20 rows dropped" in e.detail for e in edges), (
+        "the NaN reduction note must be reported in edge details")
+
+
+def test_pc_effects_are_measured_not_placeholder(chain_driver):
+    edges = discovery_edges(chain_driver, method="pc")
+    assert edges
+    values = [e.effect for e in edges]
+    assert any(v != 1.0 for v in values), (
+        "PC edges must carry regression-estimated effects, not the 1.0 placeholder")
+
+
+def test_ges_effects_are_measured_not_placeholder(chain_driver):
+    edges = discovery_edges(chain_driver, method="ges")
+    assert edges
+    assert any(e.effect != 1.0 for e in edges), (
+        "GES edges must carry regression-estimated effects, not the 1.0 placeholder")
+
+
+def test_dimension_guard_filters_wide_background():
+    rng = np.random.default_rng(3)
+    n = 300
+    signal = rng.normal(size=n)
+    filler = rng.normal(size=(n, 80))
+    X = np.column_stack([signal, filler])
+    y = (signal > 0).astype(int)
+    model = LogisticRegression().fit(X, y)
+    names = ["signal"] + [f"f{i}" for i in range(80)]
+    driver = detect_driver(model, names, X, name="wide")
+    edges = discovery_edges(driver, method="pc", max_features=20)
+    assert edges
+    assert any("dimension guard" in e.detail for e in edges), (
+        "the guard note must name the reduction")
+    used = {e.source for e in edges} | {e.target for e in edges}
+    assert "signal" in used, "the target-correlated feature must survive the guard"

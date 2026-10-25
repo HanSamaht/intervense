@@ -75,10 +75,10 @@ def _world_edges(data: np.ndarray, names: list[str], method: str,
     if method == "pc":
         res = _pc(data, alpha=alpha, indep_test="fisherz",
                   max_cond_size=3, show_progress=False)
-        return [(i, j, d) for i, j, _w, d in _cpdag_edges(res.G.graph, names)]
+        return [(i, j, d) for i, j, d in _cpdag_edges(res.G.graph, names)]
     if method == "ges":
         res = _ges(data, score_func="local_score_BIC")
-        return [(i, j, d) for i, j, _w, d in _cpdag_edges(res["G"].graph, names)]
+        return [(i, j, d) for i, j, d in _cpdag_edges(res["G"].graph, names)]
     if method == "lingam":
         model = DirectLiNGAM()
         model.fit(data)

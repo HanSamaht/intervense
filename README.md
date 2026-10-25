@@ -1,19 +1,35 @@
-# Intervense: Make All Black-Box Models Transparent
+# Intervense: Causal Estimation for Real-World Decisions
 
 [![CI](https://github.com/HanSamaht/intervense/actions/workflows/ci.yml/badge.svg)](https://github.com/HanSamaht/intervense/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-teal.svg)](https://hansamaht.github.io/intervense/)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 
-Intervense is a framework for interrogating black-box models. It accepts any model with a `predict` function and runs intervention experiments, faithfulness verification, and (with LLM configured) Bayesian hypothesis testing.
+Intervense estimates treatment effects from observational data, audits whether a trained model can be trusted with causal claims, and keeps a graded evidence ledger of every number it reports. It is built for intervention-type questions: what happens to the outcome when this input changes, and how much of the association survives controls.
 
-Given a model file and background data, it produces:
+The estimation stack:
 
-- Feature attribution with role annotation from concept packs
-- Counterfactual analysis: minimal input changes that flip predictions
-- Internal analysis for torch models: activation patching, SAE. Circuit discovery available for non-RNN architectures.
+- Panel fixed effects with cluster-robust standard errors, verified against statsmodels to 1e-7
+- Double machine learning for confounded treatment effects
+- Mediation chain analysis: direct, indirect, and path shares
+- CATE heterogeneity: which subgroups respond and which do not
+- Oster-style sensitivity to omitted variables
+- Bounded causal priors: what the estimate becomes under stated confounding assumptions
+
+The structure entry point runs PC, GES, or LiNGAM over features plus the model prediction, with NaN-tolerant input, measured edge effects, and a dimension guard for wide panels. Every discovered edge reports a standardized partial effect, not a placeholder.
+
+The model interrogation layer treats an existing model as the object of study:
+
+- Intervention experiments and counterfactual flips on any `predict` callable
+- Activation patching and circuit analysis for torch models
 - Faithfulness verification of its own explanations
 - Leakage detection: train/test contamination, label leakage, look-ahead bias
 - Distribution drift monitoring
+
+Compared with DoWhy or EconML, the difference is the combination: causal estimation, model-side causal interrogation, and an evidence ledger that grades every finding as interventional, observational, prior, or manual. No other open package ships all three.
+
+## Flagship case: NFL Big Data Bowl 2027
+
+A USD 100,000 judged competition track. The full analysis runs on this estimation stack: panel fixed effects with clustered errors over 305,648 player-season-weeks, mediation chains from get-off timing to pressure outcomes, and holdout evaluation split by season. The intervention graph and specification audit found a sign flip in one headline feature that plain importance rankings missed. Notebook and writeup: `examples/nfl/`.
 
 ## Install
 
