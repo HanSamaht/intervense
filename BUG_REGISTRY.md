@@ -1,3 +1,24 @@
+## 2026-10-28: discovery NaN tolerance drops rows and dies on structural missingness (manual analysis)
+
+Tag: manual analysis, framework defect. The v0.19.0 amendment claims
+NaN-tolerant discovery input, but the tolerance is row dropping. On
+the memecoins matrix (6134 tokens, 107 features, 83 percent of rows
+carry structural NaN) the drop leaves 1016 rows; combined with the
+known collinear feature deputies the correlation matrix goes singular
+and PC fails in 0.1 seconds. I am sorry for the mistake: I verified
+the fix through its unit tests and the README claim, not against the
+real matrix that motivated the fix. Correct handling for structural
+missingness: drop mostly-missing columns, median-impute the rest,
+prune near-duplicate columns (absolute correlation above 0.95) before
+the backend runs.
+Fixed in v0.19.1 and validated on the field matrix: PC 8.3 seconds,
+GES 25.1 seconds with two driver edges, reduction notes on every
+edge, and the caller's background verified unmutated. A second bug
+was found and fixed during the repair: np.asarray returned the
+caller's background object when dtypes matched, so the imputation
+mutated the driver's data in place; the matrix is now copied
+explicitly.
+
 ## 2026-10-25: gate harness inverted config labels, drop list read as include (manual analysis)
 
 Tag: manual analysis. run_gate.py passed BASE_DROP plus the target
@@ -551,3 +572,131 @@ family as the pubchem API typos: untested import paths hidden by a
 broad except. I am sorry. Fix: correct module path; the module-level
 check now asserts HAS_CAUSAL_LEARN is True when causallearn imports,
 so a path typo cannot silently disable the backends again.
+
+## 2026-10-25: name-that-llm train kernel v1 hardcoded competition mount path (framework tool output)
+
+Tag: framework tool output. The kernel failed after 35 seconds with
+FileNotFoundError: /kaggle/input/competitions/name-that-llm/train.csv.
+I took that path from the competition overview text instead of probing
+the mount layout an API-pushed kernel actually gets, so version 1
+never reached training. Same failure family as the pubchem kernel
+bugs: shipping a path I did not verify against the real environment. I
+am sorry. Fix: resolve train and dataset inputs by glob over both the
+new (/kaggle/input/competitions/<slug>) and classic (/kaggle/input/
+<slug>) mount layouts, and print the /kaggle/input tree at kernel
+startup so any future path problem is visible in the first log lines.
+
+## 2026-10-26: name-that-llm train kernel v2 peft torchao dispatcher crash (framework tool output)
+
+Tag: framework tool output. Version 2 reached model loading, then
+get_peft_model raised ImportError: the Kaggle image ships torchao
+0.10.0 while the installed peft supports only versions above 0.16.0,
+and peft's LoRA dispatcher probes torchao before the standard linear
+path, so an incompatible torchao is fatal instead of ignored. I
+verified the pipeline against local library versions but not against
+the Kaggle image's peft and torchao pair, so this integration gap only
+appeared on the second paid run. I am sorry. Fix: uninstall torchao at
+kernel start and additionally force peft.import_utils and the lora
+torchao dispatcher's is_torchao_available to return False, so peft
+always falls back to the standard LoRA modules.
+
+## 2026-10-26: name-that-llm train kernel v3 numpy tensor bug at first step (manual analysis)
+
+Tag: manual analysis. get_peft_model worked after the torchao fix, but
+the first training step raised AttributeError: numpy.ndarray has no
+attribute cuda, because batches_by_length yields numpy label slices and
+run_stage called .cuda(0) on them directly. Third consecutive
+runtime-only failure on the paid Kaggle runs; all three were invisible
+to py_compile, and I had no way to execute the training path locally,
+so each bug cost a full kernel round trip. I am sorry. Fix: convert
+labels with torch.from_numpy at the use site, make the kernel device
+agnostic so the identical code runs on CPU, and add a local smoke test
+that executes the whole train and inference path end to end with tiny
+models before any further push.
+
+## 2026-10-26: name-that-llm deberta training diverged to nan on v4 (framework tool output)
+
+Tag: framework tool output. The Qwen path trained cleanly (fold 0
+balanced accuracy 0.4889), but every DeBERTa epoch logged mean loss nan
+from the first epoch and fold 0 scored 0.0556, chance level. The most
+likely cause is reentrant gradient checkpointing interacting with
+DeBERTa's disentangled attention: the kernel enabled
+gradient_checkpointing_enable() with default arguments on the CUDA run
+only, which is exactly the path the CPU smoke test cannot exercise, and
+reentrant checkpointing is a documented nan source with this family. I
+enabled checkpointing without verifying this combination on the target
+architecture, and the smoke test gave me false confidence because the
+stub model is a plain BertModel. I am sorry. Fix plan: pass
+use_reentrant False when enabling checkpointing, halve the DeBERTa
+learning rates, and add a nan guard that aborts DeBERTa training with a
+clear message instead of silently saving chance-level weights.
+
+## 2026-10-26: name-that-llm deberta still diverges after checkpointing fix (framework tool output)
+
+Tag: framework tool output. Version 5 replaced reentrant gradient
+checkpointing with use_reentrant False and halved the learning rates,
+yet DeBERTa still hit nan at batch 2 of stage 1, so reentrant
+checkpointing was not the cause. The nan guard aborted cleanly and the
+kernel completed with Qwen and SVM artifacts only. Remaining suspects:
+the sdpa attention path in transformers 5.x with DeBERTa's
+disentangled attention (reported as a nan source; eager attention is
+the documented workaround), or fp32 instability specific to
+deberta-v3-large at this batch shape. I misidentified the root cause on
+the first fix attempt and spent a 5.3 hour run confirming it. I am
+sorry. Decision: proceed with the Qwen plus SVM blend for the current
+pipeline; DeBERTa is parked unless we choose to spend another cycle on
+attn_implementation eager or a different encoder.
+
+## 2026-10-26: name-that-llm infer kernel could not find train output mount (framework tool output)
+
+Tag: framework tool output. The infer kernel resolved its artifact
+directory against /kaggle/input/name-that-llm-train-all and a shallow
+glob, but the new platform mounts kernel sources under
+/kaggle/input/notebooks/<owner>/<slug>/, and the same kernel mounts the
+competition under /kaggle/input/competitions/<slug> while the training
+kernel saw the classic /kaggle/input/<slug> layout. Two infer runs
+failed on the missing mount. I assumed one mount layout from the
+training kernel instead of printing the tree on the infer kernel from
+the start; the diagnosis print I added to the training kernel after v1
+should have been added to both. I am sorry. Fix: resolve the artifact
+directory by searching for the marker file qwen_final_head.pt anywhere
+under /kaggle/input, keep both competition path layouts in the glob
+list, and raise the input tree print depth to four.
+
+## 2026-10-26: glm expansion run silently used stale config (manual analysis)
+
+Tag: manual analysis. I rewrote gen_glm_data.py constants through a
+python heredoc that opened the file in read mode and called write,
+which raised io.UnsupportedOperation before changing anything; the
+generation script then ran with the old 240 prompt config and died
+early on ZhipuAI 429 rate limits without writing outputs. The bash
+sequence did not stop after the failed rewrite because the commands
+were newline separated, and the pipeline exit code came from tail. I
+did the edit with a throwaway one-off instead of the proper edit tool
+and chained it without &&. I am sorry. Fix: edit the file with the
+editor tool, gate the run on the rewrite with &&, and make the seed
+generation tolerate per-domain rate limit failures instead of
+aborting.
+
+## 2026-10-27: causal tower kernel regex has an extra capture group (manual analysis)
+
+Tag: manual analysis. r"([A-Z][a-z]?)((\d*))" carries three capture
+groups; the loop unpacks two, so training crashed with "too many
+values to unpack". I wrote the extra group while hand-escaping a
+nested heredoc and explicitly judged it harmless, which was wrong:
+the same escaping family as the FCIBased typo. I am sorry. Fix:
+single-group regex r"([A-Z][a-z]?)(\d*)", verified by executing the
+element_ratios function locally on real formulas, not by parse alone.
+
+## 2026-11-13: JELLY example unit confusion and date typo (manual analysis)
+
+Tag: manual analysis. (1) The event study exponentiated the panel FE
+standardized coefficient (within per sd) as if it were a log-scale
+coefficient, turning a 2 percent range increase into a claimed 33
+percent. The raw log-scale effect is about 0.02 log points. (2) The
+writeup dated the incident 2026-03-26; the event was 2025-03-26.
+(3) A leftover confusing expression in FACTS. I caught these only
+because the owner demanded a full review before push; the wrong 33
+percent was about to ship publicly. I am sorry. Fixed by reporting
+both the standardized and raw log-scale effects from separate fits,
+correcting the date, and cleaning FACTS.

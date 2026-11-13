@@ -1,0 +1,76 @@
+{
+  "window": [
+    "2025-03-25 00:00:00+00:00",
+    "2025-03-26 15:15:00+00:00"
+  ],
+  "price_min": 0.008293,
+  "price_max": 0.051695,
+  "realized_squeeze_multiple": 6.2,
+  "peak_time_utc": "2025-03-26 13:59:00+00:00",
+  "event_study": {
+    "onset_utc": "2025-03-26 14:00:00+00:00",
+    "raw_log_effect": 0.0213,
+    "range_multiplier": 0.0215,
+    "standardized_coef_within_per_sd": 0.282719,
+    "se_cluster": 0.045374,
+    "p_value": 0.0,
+    "ci95": [
+      0.193786,
+      0.371652
+    ],
+    "significant": true,
+    "n_groups": 24,
+    "engine": "intervense.analysis.panel_fixed_effects (cluster-robust) plus raw-scale OLS with hour dummies"
+  },
+  "specification_curve": {
+    "n_specs": 200,
+    "share_positive": 1.0,
+    "min": 0.018,
+    "max": 0.023
+  },
+  "counterfactual_cap_scan": {
+    "implied_realized_takeup": 0.58,
+    "worst_short_loss_usd_m": 20.7,
+    "scan": [
+      {
+        "cap_pct_of_open_interest": 2,
+        "vault_loss_usd_m": 0.4,
+        "survives_without_intervention": true
+      },
+      {
+        "cap_pct_of_open_interest": 5,
+        "vault_loss_usd_m": 1.0,
+        "survives_without_intervention": true
+      },
+      {
+        "cap_pct_of_open_interest": 10,
+        "vault_loss_usd_m": 2.1,
+        "survives_without_intervention": true
+      },
+      {
+        "cap_pct_of_open_interest": 20,
+        "vault_loss_usd_m": 4.1,
+        "survives_without_intervention": true
+      },
+      {
+        "cap_pct_of_open_interest": 50,
+        "vault_loss_usd_m": 10.4,
+        "survives_without_intervention": true
+      },
+      {
+        "cap_pct_of_open_interest": 100,
+        "vault_loss_usd_m": 12.0,
+        "survives_without_intervention": true
+      }
+    ]
+  },
+  "facts": {
+    "attacker_short_notional": 6100000.0,
+    "squeeze_move": 4.4,
+    "hlp_absorbed_pnl": -12000000.0,
+    "hlp_vault_equity": 230000000.0
+  },
+  "method": "intervense postmortem pattern: event study + specification curve + counterfactual parameter scan",
+  "grading": "observational for market data; prior for reported position sizes"
+}
+saved D:\mic\examples\jelly\postmortem.json
