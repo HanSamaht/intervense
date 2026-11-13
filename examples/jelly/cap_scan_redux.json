@@ -1,0 +1,48 @@
+{
+  "n_steps": 472,
+  "realized_run": {
+    "max_short_loss_usd_m": 11.3,
+    "max_vault_loss_usd_m": 11.3,
+    "solvency_violations": 0
+  },
+  "no_vault_leg_do": {
+    "max_short_loss_usd_m": 11.3,
+    "max_vault_loss_usd_m": 0.0,
+    "solvency_violations": 0,
+    "note": "do_variable(vault_loss=0): the attacker's loss stays with the attacker's margin, the vault is untouched"
+  },
+  "cap_scan": [
+    {
+      "cap_pct": 2.0,
+      "vault_loss_usd_m": 0.2,
+      "solvency_violations": 0
+    },
+    {
+      "cap_pct": 5.0,
+      "vault_loss_usd_m": 0.6,
+      "solvency_violations": 0
+    },
+    {
+      "cap_pct": 10.0,
+      "vault_loss_usd_m": 1.1,
+      "solvency_violations": 0
+    },
+    {
+      "cap_pct": 20.0,
+      "vault_loss_usd_m": 2.3,
+      "solvency_violations": 0
+    },
+    {
+      "cap_pct": 50.0,
+      "vault_loss_usd_m": 5.7,
+      "solvency_violations": 0
+    },
+    {
+      "cap_pct": 100.0,
+      "vault_loss_usd_m": 11.3,
+      "solvency_violations": 0
+    }
+  ],
+  "comparison": "analysis.py hand scan reported 0.4M..12.0M over the same cap grid; this run reproduces it through the module",
+  "grading": "realized path observational; mechanism parameters prior"
+}

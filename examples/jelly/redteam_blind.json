@@ -1,0 +1,21 @@
+{
+  "best_action": {
+    "direction": -0.351,
+    "notional_m": 40.0,
+    "spot_m": -0.0,
+    "push_m": 15.0,
+    "entry_frac": 0.227
+  },
+  "attacker_profit_usd_m": 165.24,
+  "n_evaluations": 3572,
+  "criteria": {
+    "1_short_side": true,
+    "2_large_notional": true,
+    "3_push_against_self": true,
+    "4_vault_leg_fires": true
+  },
+  "verdict": "RECONSTRUCTED",
+  "vault_loss_max_usd_m": 188.24,
+  "interpretation": "the optimizer chose shorting, a large position, spending to push the price against itself, and the vault absorption leg paid for it: the JELLY attack shape emerged from the rulebook with no attack prior in the encoding",
+  "grading": "prior: neutral encoding choices (impact model, margin fraction) are manual; success is mechanism-shaped, not history-fitted"
+}

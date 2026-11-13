@@ -36,6 +36,9 @@ mentally to the [API reference](api.md).
 | `shortcut_diff` | two graph diff | reliance classified against the discovered world graph, permutation nulls per share, classification stability under graph bootstrap |
 | `temporal_causal_graph` | interventional plus discovery | pairwise Granger lagged channel causes with model reliance per lag |
 | `temporal_discovery(df, columns, tau_max)` | discovery | PCMCI lagged edges over a time-indexed panel, measured lag effects, NaN and dimension guards |
+| `simulate_mechanism(spec, n_steps, exogenous, do_param, do_variable, do_path)` | counterfactual engine | run an encoded protocol rulebook under interventions; invariant violations recorded per step |
+| `scan_params(spec, param, values, outcome)` | counterfactual engine | grid one mechanism parameter under do_param, one outcome row per setting |
+| `attack_search(spec, n_steps, exogenous, action_dims, build_run, objective)` | adversarial search | differential evolution over a neutral action box against an encoded rulebook; returns the best action, profit, and search trace |
 
 ## Is it fair
 
