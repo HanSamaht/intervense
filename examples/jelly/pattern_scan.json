@@ -1,0 +1,135 @@
+{
+  "snapshot_utc": "2026-11-13T14:37:58Z",
+  "n_markets": 179,
+  "n_flagged_two_plus": 127,
+  "n_flagged_all_three": 2,
+  "top10": [
+    {
+      "market": "HMSTR",
+      "oi_usd_m": 1.75,
+      "day_ntl_m": 0.07,
+      "oi_over_volume": 25.49,
+      "mark_oracle_gap_pct": 0.709,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": true,
+      "S3_thin": true,
+      "signature_hits": 3
+    },
+    {
+      "market": "XTEN",
+      "oi_usd_m": 1.7,
+      "day_ntl_m": 0.48,
+      "oi_over_volume": 3.55,
+      "mark_oracle_gap_pct": 2.533,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": true,
+      "S3_thin": true,
+      "signature_hits": 3
+    },
+    {
+      "market": "GRIFFAIN",
+      "oi_usd_m": 0.93,
+      "day_ntl_m": 0.03,
+      "oi_over_volume": 29.99,
+      "mark_oracle_gap_pct": 0.17,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "PURR",
+      "oi_usd_m": 10.79,
+      "day_ntl_m": 0.6,
+      "oi_over_volume": 17.91,
+      "mark_oracle_gap_pct": 0.263,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "LINEA",
+      "oi_usd_m": 1.48,
+      "day_ntl_m": 0.09,
+      "oi_over_volume": 17.4,
+      "mark_oracle_gap_pct": 0.0,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "ASTER",
+      "oi_usd_m": 19.94,
+      "day_ntl_m": 1.24,
+      "oi_over_volume": 16.11,
+      "mark_oracle_gap_pct": 0.054,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "STBL",
+      "oi_usd_m": 1.43,
+      "day_ntl_m": 0.11,
+      "oi_over_volume": 12.8,
+      "mark_oracle_gap_pct": 0.12,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "MNT",
+      "oi_usd_m": 3.0,
+      "day_ntl_m": 0.24,
+      "oi_over_volume": 12.68,
+      "mark_oracle_gap_pct": 0.046,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "BLUR",
+      "oi_usd_m": 0.78,
+      "day_ntl_m": 0.07,
+      "oi_over_volume": 10.63,
+      "mark_oracle_gap_pct": 0.24,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    },
+    {
+      "market": "PENDLE",
+      "oi_usd_m": 7.63,
+      "day_ntl_m": 0.79,
+      "oi_over_volume": 9.68,
+      "mark_oracle_gap_pct": 0.071,
+      "funding": 1.25e-05,
+      "S1_top_heavy": true,
+      "S2_pressured": false,
+      "S3_thin": true,
+      "signature_hits": 2
+    }
+  ],
+  "jelly_today": null,
+  "signature_definition": {
+    "S1_top_heavy": "open interest notional / daily notional volume > 0.5",
+    "S2_pressured": "|mark/oracle - 1| > 0.5% or |funding| > 0.00045 per 8h",
+    "S3_thin": "daily notional volume < 2M USD"
+  },
+  "grading": "observational snapshot, single point in time; no prediction or trading"
+}

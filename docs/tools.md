@@ -34,7 +34,8 @@ mentally to the [API reference](api.md).
 | `holdout_evaluation` | group-level holdout | entire levels held out, AUC Brier calibration, prior baseline |
 | `specification_audit` | specification curve | sign stability across control subsets, minimal flip sets, cohort fold stability, estimator_factory for non sklearn families |
 | `shortcut_diff` | two graph diff | reliance classified against the discovered world graph, permutation nulls per share, classification stability under graph bootstrap |
-| `temporal_causal_graph` | interventional plus discovery | Granger or PCMCI lagged channel causes with model reliance per lag |
+| `temporal_causal_graph` | interventional plus discovery | pairwise Granger lagged channel causes with model reliance per lag |
+| `temporal_discovery(df, columns, tau_max)` | discovery | PCMCI lagged edges over a time-indexed panel, measured lag effects, NaN and dimension guards |
 
 ## Is it fair
 

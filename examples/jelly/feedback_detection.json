@@ -1,0 +1,41 @@
+{
+  "attack_window": {
+    "n": 123,
+    "edges": [
+      {
+        "from": "attacker_oi",
+        "to": "logret",
+        "weight": -1.124
+      },
+      {
+        "from": "logvol",
+        "to": "vault_exposure",
+        "weight": 0.941
+      },
+      {
+        "from": "attacker_oi",
+        "to": "vault_exposure",
+        "weight": -0.233
+      }
+    ],
+    "edges_into_price": [
+      {
+        "from": "attacker_oi",
+        "to": "logret",
+        "weight": -1.124
+      }
+    ],
+    "error": null
+  },
+  "control_window": {
+    "n": 123,
+    "edges": null,
+    "edges_into_price": [],
+    "error": "constant column"
+  },
+  "pass_condition": "attack panel has a position/vault -> price edge and control does not",
+  "verdict": "PASS",
+  "grading": "price and volume observational; attacker OI and vault exposure synthetic from the public timeline (prior)",
+  "backend": "DirectLiNGAM, the same backend as intervense tabular discovery",
+  "caveats": "linear non-Gaussian simplification; synthetic position series; single market single event"
+}

@@ -168,6 +168,7 @@ For advanced use the layers are importable directly:
 
 ```python
 from intervense.analysis import build_causal_graph, discovery_edges, explain_sample
+- `intervense.analysis.temporal_discovery.temporal_discovery(df, columns, tau_max, pc_alpha, max_edges, max_columns, focal)`: PCMCI lagged-edge discovery on time-indexed panels; returns standardized lag effects with MCI p-values.
 from intervense.analysis.temporal_causal import granger_pairwise
 from intervense.analysis.crosscoder import train_crosscoder, crosscoder_model_diff
 ```

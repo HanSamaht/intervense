@@ -700,3 +700,12 @@ because the owner demanded a full review before push; the wrong 33
 percent was about to ship publicly. I am sorry. Fixed by reporting
 both the standardized and raw log-scale effects from separate fits,
 correcting the date, and cleaning FACTS.
+
+## 2026-11-13: temporal_discovery lag_effect negative-slice misalignment (manual analysis)
+
+Tag: manual analysis. First version computed control-lag slices as
+X[tau - k: n - k], which wraps to empty or wrong windows whenever
+the control lag k exceeds the edge lag tau, crashing column_stack on
+length mismatch. Synthetic-panel verification caught it before any
+release. I am sorry for the sloppy first slice arithmetic. Fixed by
+aligning every column to a shared start = max(tau, k_max) window.

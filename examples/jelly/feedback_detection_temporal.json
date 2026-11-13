@@ -1,0 +1,106 @@
+{
+  "attack_edges": [
+    {
+      "source": "attacker_oi",
+      "target": "logret",
+      "lag": 1,
+      "effect_standardized": -0.0238,
+      "mci_p_value": 0.0001487761651059195,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: attacker_oi(t-1) -> logret(t), standardized lag effect -0.024, MCI p=0.00015, link -->"
+    },
+    {
+      "source": "vault_exposure",
+      "target": "vault_exposure",
+      "lag": 1,
+      "effect_standardized": 0.6633,
+      "mci_p_value": 2.3739001596557914e-28,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: vault_exposure(t-1) -> vault_exposure(t), standardized lag effect +0.663, MCI p=2.4e-28, link -->"
+    },
+    {
+      "source": "attacker_oi",
+      "target": "attacker_oi",
+      "lag": 1,
+      "effect_standardized": 0.5058,
+      "mci_p_value": 2.542710367015394e-17,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: attacker_oi(t-1) -> attacker_oi(t), standardized lag effect +0.506, MCI p=2.5e-17, link -->"
+    },
+    {
+      "source": "logvol",
+      "target": "logvol",
+      "lag": 1,
+      "effect_standardized": 0.1866,
+      "mci_p_value": 0.0016619131884631842,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: logvol(t-1) -> logvol(t), standardized lag effect +0.187, MCI p=0.0017, link -->"
+    },
+    {
+      "source": "logvol",
+      "target": "attacker_oi",
+      "lag": 1,
+      "effect_standardized": -0.0024,
+      "mci_p_value": 0.006572506847293347,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: logvol(t-1) -> attacker_oi(t), standardized lag effect -0.002, MCI p=0.0066, link -->"
+    },
+    {
+      "source": "logvol",
+      "target": "logvol",
+      "lag": 2,
+      "effect_standardized": 0.1535,
+      "mci_p_value": 0.008295182572411054,
+      "link_type": "-->",
+      "detail": "PCMCI lag-2: logvol(t-2) -> logvol(t), standardized lag effect +0.154, MCI p=0.0083, link -->"
+    },
+    {
+      "source": "logvol",
+      "target": "logvol",
+      "lag": 3,
+      "effect_standardized": 0.1532,
+      "mci_p_value": 0.008667537685986037,
+      "link_type": "-->",
+      "detail": "PCMCI lag-3: logvol(t-3) -> logvol(t), standardized lag effect +0.153, MCI p=0.0087, link -->"
+    },
+    {
+      "source": "vault_exposure",
+      "target": "vault_exposure",
+      "lag": 2,
+      "effect_standardized": -0.1817,
+      "mci_p_value": 0.01715861624168848,
+      "link_type": "-->",
+      "detail": "PCMCI lag-2: vault_exposure(t-2) -> vault_exposure(t), standardized lag effect -0.182, MCI p=0.017, link -->"
+    }
+  ],
+  "control_edges": [
+    {
+      "source": "logvol",
+      "target": "logret",
+      "lag": 1,
+      "effect_standardized": -0.0165,
+      "mci_p_value": 0.014980600755467128,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: logvol(t-1) -> logret(t), standardized lag effect -0.016, MCI p=0.015, link -->"
+    },
+    {
+      "source": "logvol",
+      "target": "logvol",
+      "lag": 1,
+      "effect_standardized": 0.295,
+      "mci_p_value": 1.1636029239324993e-05,
+      "link_type": "-->",
+      "detail": "PCMCI lag-1: logvol(t-1) -> logvol(t), standardized lag effect +0.295, MCI p=1.2e-05, link -->"
+    }
+  ],
+  "attack_into_price": [
+    [
+      "attacker_oi",
+      "logret",
+      1
+    ]
+  ],
+  "attack_price_into_vault": [],
+  "verdict": "PASS",
+  "module": "intervense.analysis.temporal_discovery (PCMCI)"
+}
