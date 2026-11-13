@@ -1,0 +1,170 @@
+{
+  "grading": "all columns observational from public APIs",
+  "windows": {
+    "attack": {
+      "n_rows": 123,
+      "edges": [
+        {
+          "source": "logret",
+          "target": "logret",
+          "lag": 1,
+          "effect_standardized": 0.1166,
+          "mci_p_value": 0.015095374160021583,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logret(t-1) -> logret(t), standardized lag effect +0.117, MCI p=0.015, link -->"
+        },
+        {
+          "source": "premium",
+          "target": "premium",
+          "lag": 1,
+          "effect_standardized": 0.4856,
+          "mci_p_value": 1.8997662340679032e-18,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: premium(t-1) -> premium(t), standardized lag effect +0.486, MCI p=1.9e-18, link -->"
+        },
+        {
+          "source": "funding",
+          "target": "funding",
+          "lag": 1,
+          "effect_standardized": 0.4944,
+          "mci_p_value": 2.8937336250738427e-18,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: funding(t-1) -> funding(t), standardized lag effect +0.494, MCI p=2.9e-18, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "premium",
+          "lag": 3,
+          "effect_standardized": 0.1208,
+          "mci_p_value": 0.00043166610239371594,
+          "link_type": "-->",
+          "detail": "PCMCI lag-3: logret(t-3) -> premium(t), standardized lag effect +0.121, MCI p=0.00043, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "funding",
+          "lag": 3,
+          "effect_standardized": 0.1107,
+          "mci_p_value": 0.000918726189320151,
+          "link_type": "-->",
+          "detail": "PCMCI lag-3: logret(t-3) -> funding(t), standardized lag effect +0.111, MCI p=0.00092, link -->"
+        },
+        {
+          "source": "logvol",
+          "target": "logvol",
+          "lag": 1,
+          "effect_standardized": 0.1866,
+          "mci_p_value": 0.0016619131884631842,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logvol(t-1) -> logvol(t), standardized lag effect +0.187, MCI p=0.0017, link -->"
+        },
+        {
+          "source": "logvol",
+          "target": "logvol",
+          "lag": 2,
+          "effect_standardized": 0.1535,
+          "mci_p_value": 0.008295182572411054,
+          "link_type": "-->",
+          "detail": "PCMCI lag-2: logvol(t-2) -> logvol(t), standardized lag effect +0.154, MCI p=0.0083, link -->"
+        },
+        {
+          "source": "logvol",
+          "target": "logvol",
+          "lag": 3,
+          "effect_standardized": 0.1532,
+          "mci_p_value": 0.008667537685986037,
+          "link_type": "-->",
+          "detail": "PCMCI lag-3: logvol(t-3) -> logvol(t), standardized lag effect +0.153, MCI p=0.0087, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "premium",
+          "lag": 1,
+          "effect_standardized": -0.0447,
+          "mci_p_value": 0.015537486351133856,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logret(t-1) -> premium(t), standardized lag effect -0.045, MCI p=0.016, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "funding",
+          "lag": 1,
+          "effect_standardized": -0.0403,
+          "mci_p_value": 0.0310622512556829,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logret(t-1) -> funding(t), standardized lag effect -0.040, MCI p=0.031, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "premium",
+          "lag": 2,
+          "effect_standardized": 0.0874,
+          "mci_p_value": 0.04635662364127526,
+          "link_type": "-->",
+          "detail": "PCMCI lag-2: logret(t-2) -> premium(t), standardized lag effect +0.087, MCI p=0.046, link -->"
+        }
+      ]
+    },
+    "control": {
+      "n_rows": 123,
+      "edges": [
+        {
+          "source": "logvol",
+          "target": "logret",
+          "lag": 1,
+          "effect_standardized": -0.017,
+          "mci_p_value": 0.014980600755467128,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logvol(t-1) -> logret(t), standardized lag effect -0.017, MCI p=0.015, link -->"
+        },
+        {
+          "source": "funding",
+          "target": "funding",
+          "lag": 1,
+          "effect_standardized": 0.4819,
+          "mci_p_value": 5.2919523818275164e-18,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: funding(t-1) -> funding(t), standardized lag effect +0.482, MCI p=5.3e-18, link -->"
+        },
+        {
+          "source": "premium",
+          "target": "premium",
+          "lag": 1,
+          "effect_standardized": 0.49,
+          "mci_p_value": 2.43941446457141e-17,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: premium(t-1) -> premium(t), standardized lag effect +0.490, MCI p=2.4e-17, link -->"
+        },
+        {
+          "source": "logvol",
+          "target": "logvol",
+          "lag": 1,
+          "effect_standardized": 0.295,
+          "mci_p_value": 1.1636029239324993e-05,
+          "link_type": "-->",
+          "detail": "PCMCI lag-1: logvol(t-1) -> logvol(t), standardized lag effect +0.295, MCI p=1.2e-05, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "funding",
+          "lag": 2,
+          "effect_standardized": -0.0587,
+          "mci_p_value": 0.022208592427815373,
+          "link_type": "-->",
+          "detail": "PCMCI lag-2: logret(t-2) -> funding(t), standardized lag effect -0.059, MCI p=0.022, link -->"
+        },
+        {
+          "source": "logret",
+          "target": "premium",
+          "lag": 2,
+          "effect_standardized": -0.0421,
+          "mci_p_value": 0.031555007827949504,
+          "link_type": "-->",
+          "detail": "PCMCI lag-2: logret(t-2) -> premium(t), standardized lag effect -0.042, MCI p=0.032, link -->"
+        }
+      ]
+    }
+  },
+  "verdict": "PASS",
+  "finding": "price returns lead funding/premium by 15 minutes in the attack window at p < 0.001; absent in control"
+}
