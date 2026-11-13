@@ -1,0 +1,64 @@
+{
+  "jelly": {
+    "n_candles": 471,
+    "window": [
+      "2025-03-25 00:05:00+00:00",
+      "2025-03-26 15:15:00+00:00"
+    ],
+    "net_move": 2.2264,
+    "arm_a_regime_break": {
+      "pre_realized_vol": 0.0135,
+      "event_realized_vol": 0.04307,
+      "ratio": 3.19,
+      "detected": true,
+      "threshold": 3.0
+    },
+    "arm_b_causal_edge": {
+      "edge": "attacker_oi -> logret, lag 1",
+      "p_value": 0.000149,
+      "control_clean": true,
+      "note": "position series synthetic from the public timeline (prior grading)"
+    }
+  },
+  "luna": {
+    "n_candles": 864,
+    "window": [
+      "2022-05-09 00:05:00+00:00",
+      "2022-05-12 00:00:00+00:00"
+    ],
+    "net_move": 0.0169,
+    "arm_a_regime_break": {
+      "pre_realized_vol": 0.00686,
+      "event_realized_vol": 0.06963,
+      "ratio": 10.15,
+      "detected": true,
+      "threshold": 3.0
+    }
+  },
+  "crv": {
+    "n_candles": 576,
+    "window": [
+      "2022-11-21 04:05:00+00:00",
+      "2022-11-23 04:00:00+00:00"
+    ],
+    "net_move": 1.3026,
+    "arm_a_regime_break": {
+      "pre_realized_vol": 0.00287,
+      "event_realized_vol": 0.01355,
+      "ratio": 4.71,
+      "detected": true,
+      "threshold": 3.0
+    }
+  },
+  "arm_b_coverage": {
+    "events_with_position_data": 1,
+    "events_total": 3,
+    "note": "the causal layer cannot run on public candles alone; position or mechanism data is the binding constraint"
+  },
+  "summary": {
+    "arm_a_detected": "3/3",
+    "arm_b_detected": "1/1 of events with position data (synthetic positions)",
+    "honest_read": "the anomaly layer fires on all market-visible stress; the causal layer, which is the differentiating one, ran on one event with synthetic position input. Stable discovery of JELLY-class mechanism flaws requires position or mechanism data pipelines; price candles alone do not carry the loop.",
+    "grading": "observational candles; JELLY arm B positions synthetic (prior)"
+  }
+}
